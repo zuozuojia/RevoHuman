@@ -1,47 +1,49 @@
 # RevoHuman project page
 
-A static, editable research/project website inspired by the **editorial structure** of modern robotics launch pages (large hero, concise research narrative, system breakdown, media-first sections, evaluation and citation). It is intentionally not a pixel-for-pixel copy of any reference site.
+Static research website based on commit `911d070`, with an opening video and
+an interactive Figure 1. No build step or package installation is required.
 
-## Fastest way to edit
+## Preview
 
-1. Open `content.js` and change titles, paragraphs, metrics and card copy.
-2. Open `styles.css` to change colors, spacing and typography.
-3. Put your paper at `assets/revohuman-paper.pdf` to activate the PDF button.
-4. If you later add videos/images, replace any `.data-viz` placeholder blocks in `index.html` with `<video>` / `<img>` elements, or extend `content.js` with media paths.
-
-## Preview locally
+Run from this repository:
 
 ```bash
-python3 -m http.server 8000
+python3 -m http.server 8766 --bind 127.0.0.1
 ```
 
-Then visit `http://localhost:8000`.
+Open http://127.0.0.1:8766. Use HTTP rather than double-clicking `index.html`:
+browser security prevents loading the 3D modules/model through `file://`.
+Video playback requires an internet connection.
 
-## Deploy to GitHub Pages
+## Files
 
-### Option A — repository root
-1. Create a GitHub repo, e.g. `revohuman`.
-2. Upload these files to the repo root and push.
-3. GitHub → **Settings** → **Pages**.
-4. Source: **Deploy from a branch**.
-5. Branch: `main`, folder: `/ (root)`.
-6. Your page will appear at `https://YOUR_USERNAME.github.io/revohuman/`.
+- `index.html`: page content, page styles, and the opening video URL.
+- `figs/`: original page images and the static Figure 1 fallback.
+- `videos/`: original shot-list documentation, not hosted video files.
+- `figure-model.js`: interactive viewer source, loaded directly by the browser.
+- `figure-model.css`: styles scoped to the viewer.
+- `models/revohuman-left.glb`: the single 3D model asset.
+- `vendor/`: local Three.js and Lucide runtime dependencies with licenses.
+- `AGENTS.md`: branch and submission rules.
 
-### Option B — username site
-Name the repository `YOUR_USERNAME.github.io`. The same files will publish at `https://YOUR_USERNAME.github.io/`.
+There are no generated bundles, duplicate encoded models, or export/build tools.
+`Latex-template/` is not a website dependency and is excluded from Git.
 
-## Suggested real media to add
+## Features
 
-- `assets/hero.mp4`: 8–15 s silent loop of operator wearing RevoHuman while performing a dexterous task.
-- `assets/glove-closeup.webp`: clean close-up of the exoskeleton glove.
-- `assets/ego-view.mp4`: head-camera first-person demo.
-- `assets/wrist-view.mp4`: wrist-camera close interaction.
-- `assets/tactile.mp4`: tactile heatmap synchronized with touch.
-- `assets/replay.mp4`: human → URDF/digital hand replay split-screen.
-- `assets/retarget.mp4`: human demonstration → robot execution.
+The opening video streams from https://8.163.108.245/videos/preview.mp4.
+It is not stored in this repository. The media server needs a valid HTTPS
+certificate and available bandwidth; the website does not re-encode the video.
 
-For a Figure/Genesis/Generalist-style launch page, **real video matters more than extra text**. Keep clips short, autoplaying, muted and looped.
+Figure 1 supports rotation, zoom, front/back/side views, selecting and hiding
+links, reset, auto-rotation, and fullscreen where supported. If WebGL or the
+model cannot load, the original static figures remain visible.
 
-## Notes on claims
+## Publishing
 
-The current page uses only hardware/system values already stated in the supplied RevoHuman draft. Experimental result cards are deliberately marked `PENDING` where the draft describes an evaluation protocol but does not yet contain numerical results.
+Work on `feature/ljt`. Push only when explicitly authorized, and integrate by
+pull request with a change/validation report. GitHub Pages can serve the
+repository root directly from the configured publishing branch.
+
+The rest of the page retains the content and styling of `911d070`. Planned
+video slots remain placeholders until their media URLs are supplied.

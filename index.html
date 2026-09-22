@@ -203,9 +203,21 @@
     header nav{display:none}
     section{padding:34px 0}
   }
+  /* Full-viewport opening film; existing page styles remain unchanged. */
+  .opening-film{width:100%;height:100vh;height:100svh;background:#000;overflow:hidden}
+  .opening-film video{display:block;width:100%;height:100%;object-fit:contain;background:#000}
 </style>
+<link rel="stylesheet" href="figure-model.css">
+<script type="importmap">{"imports":{"three":"./vendor/three/three.module.min.js"}}</script>
 </head>
 <body>
+
+<div class="opening-film" aria-label="RevoHuman demonstration video">
+  <video id="openingVideo" controls autoplay muted loop playsinline preload="auto" aria-label="RevoHuman demonstration">
+    <source src="https://8.163.108.245/videos/preview.mp4" type="video/mp4">
+    <a href="https://8.163.108.245/videos/preview.mp4">Download the RevoHuman demonstration video</a>
+  </video>
+</div>
 
 <header>
   <div class="wrap-wide bar">
@@ -254,9 +266,21 @@
   <!-- teaser -->
   <div class="wrap-wide">
     <figure>
-      <div class="fig fig-pair">
+      <div id="figure-model" class="figure-model" aria-label="Interactive RevoHuman glove model">
+        <div class="model-toolbar" hidden>
+          <select id="model-view" aria-label="Model view"><option value="default">Three-quarter</option><option value="front">Front</option><option value="back">Back</option><option value="side">Side</option></select>
+          <select id="model-part" aria-label="Select a link"><option value="">All links</option></select>
+          <button id="model-reset" type="button" title="Reset view and visibility" aria-label="Reset view and visibility"><i data-lucide="rotate-ccw"></i></button>
+          <button id="model-hide" type="button" title="Hide selected link" aria-label="Hide selected link" disabled><i data-lucide="eye-off"></i></button>
+          <button id="model-spin" type="button" title="Auto-rotate" aria-label="Auto-rotate" aria-pressed="false"><i data-lucide="rotate-3d"></i></button>
+          <button id="model-fullscreen" type="button" title="Fullscreen" aria-label="Fullscreen"><i data-lucide="maximize"></i></button>
+        </div>
+        <div id="model-stage" class="model-stage" hidden></div>
+        <p id="model-status" class="model-status" role="status">Loading 3D model...</p>
+      <div id="model-fallback" class="fig fig-pair">
         <img src="figs/glove-render-front.png" alt="RevoHuman data-collection glove, front view" class="zoom">
         <img src="figs/glove-render-side.png" alt="RevoHuman data-collection glove, side view" class="zoom">
+      </div>
       </div>
       <figcaption><b>Figure 1.</b> The RevoHuman data-collection glove: a side-mounted 21-DoF exoskeleton with magnetic joint encoders and full-palm thin-film tactile sensing, worn over a stretchable support glove.</figcaption>
     </figure>
@@ -680,6 +704,13 @@
   });
   lb.addEventListener('click', function(){ lb.classList.remove('open'); });
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') lb.classList.remove('open'); });
+</script>
+<script src="vendor/lucide.min.js"></script>
+<script type="module">
+  import('./figure-model.js').catch(function(error){
+    console.error(error);
+    document.getElementById('model-status').textContent = '3D unavailable. Original figures shown.';
+  });
 </script>
 </body>
 </html>
