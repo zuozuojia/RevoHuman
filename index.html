@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#090a0b" />
+  <meta name="description" content="RevoHuman — high-fidelity human demonstration capture for contact-grounded dexterous manipulation." />
+  <title>RevoHuman — Human Demonstration Capture for Dexterous Manipulation</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header class="nav" id="nav">
+    <a class="brand" href="#top" aria-label="RevoHuman home"><span class="brand-dot"></span><span data-content="brand">RevoHuman</span></a>
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#overview">Overview</a>
+      <a href="#system">System</a>
+      <a href="#data">Data</a>
+      <a href="#evaluation">Evaluation</a>
+      <a href="#paper">Paper</a>
+    </nav>
+    <div class="nav-actions">
+      <button id="themeToggle" class="icon-btn" aria-label="Toggle theme">◐</button>
+      <a class="pill pill-small" href="#paper">Read paper ↗</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero section-pad">
+      <div class="hero-copy reveal">
+        <div class="eyebrow"><span class="live-dot"></span><span data-content="eyebrow">Research preview · 2026</span></div>
+        <h1 class="display" data-content="title">RevoHuman</h1>
+        <h2 class="hero-subtitle" data-content="subtitle">High-fidelity human demonstrations for contact-grounded dexterous manipulation.</h2>
+        <p class="hero-deck" data-content="heroDeck">A wearable multimodal capture system that records how humans see, move and make contact — synchronizing egocentric RGB, 21-DoF hand kinematics, wrist pose and tactile signals into robot-learning-ready trajectories.</p>
+        <div class="hero-cta">
+          <a class="pill" href="#system">Explore the system ↓</a>
+          <a class="text-link" href="#paper">Paper & citation ↗</a>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal" aria-label="RevoHuman system visual">
+        <div class="hero-grid"></div>
+        <svg class="handviz" viewBox="0 0 900 720" role="img" aria-label="Abstract hand capture visualization">
+          <defs>
+            <filter id="glow"><feGaussianBlur stdDeviation="6" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <linearGradient id="lineFade" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".95"/><stop offset="1" stop-color="currentColor" stop-opacity=".22"/></linearGradient>
+          </defs>
+          <g class="scan-arcs" fill="none" stroke="currentColor" opacity=".24">
+            <ellipse cx="450" cy="380" rx="330" ry="225" />
+            <ellipse cx="450" cy="380" rx="250" ry="170" />
+            <ellipse cx="450" cy="380" rx="170" ry="116" />
+          </g>
+          <g class="skeleton" fill="none" stroke="url(#lineFade)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M455 585 L456 474 L440 388 L407 300 L380 213"/>
+            <path d="M456 474 L506 374 L527 260 L532 168"/>
+            <path d="M456 474 L571 400 L624 307 L646 228"/>
+            <path d="M456 474 L610 449 L688 389 L731 329"/>
+            <path d="M444 472 L338 430 L267 376 L221 323"/>
+            <path d="M444 472 L337 488 L251 485 L190 470"/>
+            <path d="M456 585 L555 596 L628 575"/>
+          </g>
+          <g class="joints" filter="url(#glow)"></g>
+          <g class="contact-points" fill="currentColor">
+            <circle cx="380" cy="213" r="9"/><circle cx="532" cy="168" r="9"/><circle cx="646" cy="228" r="9"/><circle cx="731" cy="329" r="9"/><circle cx="221" cy="323" r="9"/><circle cx="190" cy="470" r="9"/>
+          </g>
+        </svg>
+        <div class="visual-label label-a"><span>21 DoF / hand</span><small>magnetic encoders · 200 Hz</small></div>
+        <div class="visual-label label-b"><span>Full-palm touch</span><small>direct normal-contact sensing</small></div>
+        <div class="visual-label label-c"><span>4× RGB streams</span><small>stereo ego + dual wrist</small></div>
+        <div class="visual-label label-d"><span>&lt; 1 ms</span><small>hand sensing timestamp sync</small></div>
+        <div class="visual-caption mono">HUMAN → SENSORS → ALIGNED TRAJECTORY</div>
+      </div>
+
+      <div class="hero-specs reveal" id="heroSpecs"></div>
+    </section>
+
+    <section id="overview" class="manifesto section-pad border-top">
+      <div class="section-index mono">01 / OVERVIEW</div>
+      <div class="manifesto-grid">
+        <h2 class="statement reveal" data-content="statement">Robots need more than video.<br><span>They need grounded interaction.</span></h2>
+        <div class="manifesto-copy reveal">
+          <p data-content="overviewP1">Contact-rich manipulation depends on continuous hand configuration, wrist motion and physical contact. A single egocentric camera cannot reliably recover all three.</p>
+          <p data-content="overviewP2">RevoHuman combines human task capability with direct multimodal measurement and a portable data pipeline, targeting the three-way trade-off between task capability, data fidelity and scalable collection.</p>
+        </div>
+      </div>
+      <div class="principles" id="principles"></div>
+    </section>
+
+    <section id="system" class="system section-pad border-top">
+      <div class="section-index mono">02 / SYSTEM</div>
+      <div class="section-head reveal">
+        <h2>Capture the full interaction,<br>not a proxy for it.</h2>
+        <p>RevoHuman directly measures the motion and contact variables that matter for dexterous manipulation, then aligns them with human-centered visual context.</p>
+      </div>
+
+      <div class="architecture reveal">
+        <div class="arch-rail arch-human">
+          <span class="arch-kicker mono">SOURCE</span>
+          <strong>Human operator</strong>
+          <small>natural bimanual task execution</small>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-sensors">
+          <span class="arch-kicker mono">DIRECT SENSING</span>
+          <div class="sensor-row"><span>Head stereo RGB</span><b>190°</b></div>
+          <div class="sensor-row"><span>Dual wrist RGB</span><b>124°</b></div>
+          <div class="sensor-row"><span>Hand joint angles</span><b>21 DoF × 2</b></div>
+          <div class="sensor-row"><span>Palm & finger touch</span><b>200 Hz</b></div>
+          <div class="sensor-row"><span>Head + wrist pose</span><b>6 DoF</b></div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-sync">
+          <span class="arch-kicker mono">ALIGNMENT</span>
+          <strong>Calibrate + synchronize</strong>
+          <small>common geometry · common timeline · quality masks</small>
+          <div class="pulse-line"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-rail arch-output">
+          <span class="arch-kicker mono">OUTPUT</span>
+          <strong>Grounded trajectory</strong>
+          <small>vision + kinematics + touch</small>
+        </div>
+      </div>
+
+      <div class="bento" id="hardwareCards"></div>
+    </section>
+
+    <section id="data" class="data-story border-top">
+      <div class="sticky-copy section-pad">
+        <div class="section-index mono">03 / DATA</div>
+        <div class="sticky-inner reveal">
+          <h2>One demonstration.<br>Multiple synchronized truths.</h2>
+          <p>Every trajectory keeps raw timestamps, mapped timestamps, interpolation spans and quality masks — preserving the distinction between what was physically sampled and what was aligned after capture.</p>
+          <div class="legend mono"><span><i></i> DIRECT MEASUREMENT</span><span><i></i> ALIGNED CONTEXT</span></div>
+        </div>
+      </div>
+      <div class="data-panels" id="dataPanels"></div>
+    </section>
+
+    <section class="pipeline section-pad border-top">
+      <div class="section-index mono">04 / PIPELINE</div>
+      <div class="section-head reveal">
+        <h2>From human behavior<br>to reusable physical data.</h2>
+        <p>A compact data chain turns wearable sensing into standardized trajectories for visualization, retargeting, policy learning and downstream robot adaptation.</p>
+      </div>
+      <div class="pipeline-track" id="pipeline"></div>
+    </section>
+
+    <section id="evaluation" class="evaluation section-pad border-top">
+      <div class="section-index mono">05 / EVALUATION</div>
+      <div class="section-head reveal">
+        <h2>Evaluate the system<br>from sensor to task.</h2>
+        <p>The paper proposes a layered protocol. This page intentionally marks unpublished result fields as pending rather than inventing benchmark numbers.</p>
+      </div>
+      <div class="eval-grid" id="evalGrid"></div>
+      <div class="task-strip reveal">
+        <div><span class="mono">TASK SUITE</span><strong>200 manipulation tasks</strong></div>
+        <p>Fine pinching · in-hand manipulation · tool use · twisting & insertion · deformables · constrained spaces · bimanual coordination.</p>
+      </div>
+    </section>
+
+    <section class="stack section-pad border-top">
+      <div class="section-index mono">06 / DATA STACK</div>
+      <div class="section-head reveal">
+        <h2>Not one source.<br>A complementary data stack.</h2>
+        <p>RevoHuman is designed as the high-fidelity human grounding layer between highly scalable visual/simulation data and embodiment-specific robot data.</p>
+      </div>
+      <div class="stack-table reveal" id="stackTable"></div>
+    </section>
+
+    <section id="paper" class="paper section-pad border-top">
+      <div class="paper-card reveal">
+        <div>
+          <div class="section-index mono">07 / PAPER</div>
+          <h2 data-content="paperTitle">RevoHuman: High-Fidelity Human Demonstration Capture for Contact-Grounded Dexterous Manipulation</h2>
+          <p data-content="paperDescription">Technical paper draft covering the wearable system, kinematics, tactile sensing, visual capture, calibration, synchronization and evaluation protocol.</p>
+          <div class="paper-actions">
+            <a class="pill" href="assets/revohuman-paper.pdf" data-optional-link>Download PDF ↗</a>
+            <button class="text-btn" id="copyCitation">Copy citation</button>
+          </div>
+        </div>
+        <pre class="citation" id="citation"></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer section-pad border-top">
+    <div class="footer-title">RevoHuman</div>
+    <div class="footer-meta">
+      <span>Human Demonstration · Dexterous Manipulation · Multimodal Capture</span>
+      <span>© <span id="year"></span> · Static research page</span>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast">Citation copied</div>
+  <script src="content.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
