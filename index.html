@@ -1,200 +1,685 @@
-<!doctype html>
+<!DOCTYPE html>
+<!--
+  RevoHuman project page — demo build.
+  Design modeled on https://openwam-official.github.io/ (clean academic project page).
+
+  HOW TO ADD VIDEOS:
+    Drop .mp4 files into ./videos/ using the filenames referenced in data-src
+    attributes (e.g. videos/overview.mp4). Slots auto-upgrade from placeholder
+    to a real <video> player when the file exists. Full list of expected
+    filenames is printed in the "Demonstration videos" section comment below.
+
+  TODO before release:
+    - Replace placeholder authors / affiliations in the hero.
+    - Point the Paper / Code / Data buttons at real URLs.
+    - Update the BibTeX entry.
+-->
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#090a0b" />
-  <meta name="description" content="RevoHuman — high-fidelity human demonstration capture for contact-grounded dexterous manipulation." />
-  <title>RevoHuman — Human Demonstration Capture for Dexterous Manipulation</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RevoHuman: High-Fidelity Human Demonstration Capture for Contact-Grounded Dexterous Manipulation</title>
+<meta name="description" content="RevoHuman is a wearable multimodal data-collection system that records high-fidelity human demonstrations for contact-rich dexterous manipulation.">
+<style>
+  :root{
+    --fg:#111214;
+    --muted:#5c636b;
+    --faint:#9aa1a9;
+    --border:#e6e7ea;
+    --bg:#ffffff;
+    --panel:#fafafa;
+    --accent:#1f3a93;      /* RevoHuman navy, used sparingly */
+    --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
+       font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
+  .wrap-wide{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* ---------- header ---------- */
+  header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.82);
+         backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--border)}
+  header .bar{display:flex;align-items:center;gap:10px;height:56px}
+  .mark{width:26px;height:26px;border-radius:8px;background:var(--accent);color:#fff;
+        display:flex;align-items:center;justify-content:center;
+        font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.5px}
+  .brand{font-weight:650;font-size:15px;letter-spacing:-.01em}
+  header nav{margin-left:auto;display:flex;gap:18px;font-size:13.5px}
+  header nav a{color:var(--muted);text-decoration:none}
+  header nav a:hover{color:var(--fg)}
+
+  /* ---------- hero ---------- */
+  .hero{padding:72px 0 40px;text-align:center}
+  .hero .mark{width:44px;height:44px;border-radius:13px;font-size:15px;margin:0 auto 18px}
+  h1{font-size:clamp(26px,4.2vw,38px);line-height:1.18;letter-spacing:-.025em;
+     font-weight:720;margin:0 auto 22px;max-width:21em}
+  .authors{font-size:15.5px;color:var(--fg)}
+  .authors sup{color:var(--muted);font-size:11px}
+  .affils{margin-top:6px;font-size:13.5px;color:var(--muted)}
+  .hero-note{margin-top:10px;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+  .btnrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:26px}
+  .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:999px;
+       font-size:14px;font-weight:550;text-decoration:none;border:1px solid var(--border);
+       color:var(--fg);background:#fff;transition:border-color .15s,background .15s}
+  .btn:hover{border-color:#c6c9cf;background:var(--panel)}
+  .btn.primary{background:var(--fg);border-color:var(--fg);color:#fff}
+  .btn.primary:hover{background:#000}
+  .btn svg{width:15px;height:15px}
+
+  /* ---------- generic sections ---------- */
+  section{padding:44px 0}
+  h2{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0 0 8px}
+  h3{font-size:17px;font-weight:650;margin:0 0 6px}
+  .lede{color:var(--muted);margin:0 0 26px;font-size:15.5px}
+  p{margin:0 0 14px}
+  .muted{color:var(--muted)}
+  .klabel{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+          color:var(--faint);margin-bottom:10px}
+  a.inline{color:var(--accent)}
+
+  /* ---------- figures ---------- */
+  figure{margin:0}
+  .fig{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--panel)}
+  .fig img{display:block;width:100%;height:auto}
+  .fig-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .fig-pair.cover img{aspect-ratio:4/3;object-fit:cover}
+  figcaption{margin-top:12px;font-size:13px;line-height:1.55;color:var(--muted);text-align:center}
+  figcaption b{color:var(--fg);font-weight:600}
+  .zoom{cursor:zoom-in}
+
+  /* ---------- abstract ---------- */
+  .abstract{font-size:15.5px;color:#2b2f33}
+
+  /* ---------- video slots ---------- */
+  .video-slot{position:relative;width:100%;aspect-ratio:16/9;background:#0e0f11;
+              border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+  .video-slot video{width:100%;height:100%;object-fit:cover;display:block;background:#000}
+  .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+      justify-content:center;gap:10px;color:#c9cdd4;
+      background:
+        repeating-linear-gradient(45deg,#141518 0 14px,#17181c 14px 28px)}
+  .ph .play{width:52px;height:52px;border-radius:50%;border:1.5px solid #3a3d44;
+            display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.04)}
+  .ph .play svg{width:18px;height:18px;margin-left:2px}
+  .ph .t{font-size:13px;font-weight:550;letter-spacing:.02em}
+  .ph .f{font-family:var(--mono);font-size:10.5px;color:#7c828c}
+  .video-note{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:12px;text-align:center}
+
+  /* ---------- numbered cards (three goals) ---------- */
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .card{border:1px solid var(--border);border-radius:14px;padding:22px;background:#fff}
+  .card .num{font-family:var(--mono);font-size:13px;color:var(--faint)}
+  .card h3{margin:10px 0 8px;font-size:16.5px}
+  .card p{font-size:14px;color:var(--muted);margin:0 0 14px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-family:var(--mono);font-size:11px;color:#3f444b;background:var(--panel);
+        border:1px solid var(--border);border-radius:999px;padding:3px 10px;white-space:nowrap}
+
+  /* ---------- spec table ---------- */
+  .tbl-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:640px}
+  th{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;
+     color:var(--muted);text-align:left;font-weight:600}
+  th,td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+  tbody tr:last-child td{border-bottom:none}
+  td:first-child{font-weight:600;white-space:nowrap}
+  td .mono{font-family:var(--mono);font-size:12px}
+
+  /* ---------- component list ---------- */
+  .complist{counter-reset:comp;margin:26px 0 0}
+  .comp{display:flex;gap:18px;padding:18px 0;border-top:1px solid var(--border)}
+  .comp .n{font-family:var(--mono);font-size:13px;color:var(--faint);padding-top:2px;min-width:24px}
+  .comp .body{flex:1}
+  .comp .name{font-weight:650;font-size:15.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .tag{font-family:var(--mono);font-size:10.5px;font-weight:500;color:var(--accent);
+       background:rgba(31,58,147,.07);border:1px solid rgba(31,58,147,.18);
+       border-radius:6px;padding:1.5px 7px;white-space:nowrap}
+  .tag.gray{color:var(--muted);background:var(--panel);border-color:var(--border)}
+  .comp p{font-size:14px;color:var(--muted);margin:6px 0 0}
+
+  /* ---------- pipeline chain ---------- */
+  .chain{display:flex;align-items:stretch;gap:0;flex-wrap:nowrap;overflow-x:auto;margin:8px 0 6px;padding-bottom:6px}
+  .node{flex:1 0 118px;border:1px solid var(--border);border-radius:10px;background:#fff;
+        padding:10px 12px;font-size:12px;line-height:1.4;display:flex;flex-direction:column;
+        justify-content:center;min-width:118px}
+  .node b{font-size:12.5px}
+  .node span{color:var(--muted);font-size:11px}
+  .arr{display:flex;align-items:center;justify-content:center;padding:0 4px;color:var(--faint);
+       font-family:var(--mono);flex:0 0 auto}
+
+  /* ---------- stat cards ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
+  .stat{border:1px solid var(--border);border-radius:12px;padding:18px;background:#fff}
+  .stat .v{font-size:26px;font-weight:720;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .stat .v small{font-size:15px;font-weight:600;color:var(--muted)}
+  .stat .k{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.4}
+
+  /* ---------- carousel ---------- */
+  .rail-head{display:flex;align-items:baseline;gap:12px;margin:26px 0 4px}
+  .rail-head h3{font-size:16px}
+  .rail-head .count{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+  .rail-head .arrows{margin-left:auto;display:flex;gap:8px}
+  .arrowbtn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);
+            background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
+            color:var(--muted);transition:border-color .15s,color .15s}
+  .arrowbtn:hover{border-color:#c6c9cf;color:var(--fg)}
+  .arrowbtn svg{width:14px;height:14px}
+  .rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;
+        padding:14px 2px 18px;scrollbar-width:thin;scrollbar-color:#d4d7db transparent}
+  .rail::-webkit-scrollbar{height:6px}
+  .rail::-webkit-scrollbar-thumb{background:#d4d7db;border-radius:3px}
+  .clip{flex:0 0 300px;scroll-snap-align:start}
+  .clip .cap{margin-top:9px;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .clip .cap b{font-weight:600}
+  .clip .video-slot{border-radius:10px}
+  .clip .ph .play{width:40px;height:40px}
+  .clip .ph .t{font-size:11.5px}
+
+  /* ---------- citation ---------- */
+  .cite{position:relative;background:#0e0f11;border-radius:12px;padding:20px;
+        overflow-x:auto;margin-top:14px}
+  .cite pre{margin:0;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:#d7dae0}
+  .copybtn{position:absolute;top:12px;right:12px;font-family:var(--mono);font-size:11px;
+           color:#c9cdd4;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
+           border-radius:8px;padding:5px 11px;cursor:pointer}
+  .copybtn:hover{background:rgba(255,255,255,.14)}
+
+  footer{border-top:1px solid var(--border);margin-top:30px;padding:28px 0 44px;
+         font-size:13px;color:var(--faint)}
+
+  /* ---------- lightbox ---------- */
+  .lb{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.86);display:none;
+      align-items:center;justify-content:center;cursor:zoom-out;padding:4vw}
+  .lb.open{display:flex}
+  .lb img{max-width:100%;max-height:100%;border-radius:8px}
+
+  @media (max-width:760px){
+    .grid3,.stats{grid-template-columns:1fr}
+    .fig-pair{grid-template-columns:1fr}
+    .clip{flex:0 0 78vw}
+    header nav{display:none}
+    section{padding:34px 0}
+  }
+</style>
 </head>
 <body>
-  <div class="progress" id="progress"></div>
-  <header class="nav" id="nav">
-    <a class="brand" href="#top" aria-label="RevoHuman home"><span class="brand-dot"></span><span data-content="brand">RevoHuman</span></a>
-    <nav class="nav-links" aria-label="Primary navigation">
-      <a href="#overview">Overview</a>
+
+<header>
+  <div class="wrap-wide bar">
+    <div class="mark">RH</div>
+    <div class="brand">RevoHuman</div>
+    <nav>
+      <a href="#abstract">Abstract</a>
       <a href="#system">System</a>
-      <a href="#data">Data</a>
+      <a href="#pipeline">Pipeline</a>
       <a href="#evaluation">Evaluation</a>
-      <a href="#paper">Paper</a>
+      <a href="#videos">Videos</a>
+      <a href="#citation">Citation</a>
     </nav>
-    <div class="nav-actions">
-      <button id="themeToggle" class="icon-btn" aria-label="Toggle theme">◐</button>
-      <a class="pill pill-small" href="#paper">Read paper ↗</a>
+  </div>
+</header>
+
+<main>
+  <!-- ================= HERO ================= -->
+  <div class="wrap hero">
+    <div class="mark">RH</div>
+    <h1>RevoHuman: High-Fidelity Human Demonstration Capture for Contact-Grounded Dexterous Manipulation</h1>
+    <!-- TODO: replace with the real author list and affiliations -->
+    <div class="authors">
+      Author One<sup>1</sup>,&nbsp; Author Two<sup>1</sup>,&nbsp; Author Three<sup>2</sup>
     </div>
-  </header>
+    <div class="affils"><sup>1</sup>First Institution &nbsp;&nbsp; <sup>2</sup>Second Institution</div>
+    <div class="hero-note">author list &amp; affiliations are placeholders</div>
+    <div class="btnrow">
+      <!-- TODO: point these at the paper PDF, code repo, and dataset -->
+      <a class="btn primary" href="#">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M4 1.5h5.5L12.5 4.5v10h-8.5v-13Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M9 1.5v3.5h3.5" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Paper
+      </a>
+      <a class="btn" href="#">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38l-.01-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.52 7.52 0 0 1 8 3.86c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48l-.01 2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z"/></svg>
+        Code
+      </a>
+      <a class="btn" href="#">🤗&nbsp;Data</a>
+      <a class="btn" href="#videos">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="9" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 7l4-2.5v7L10.5 9" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Videos
+      </a>
+    </div>
+  </div>
 
-  <main id="top">
-    <section class="hero section-pad">
-      <div class="hero-copy reveal">
-        <div class="eyebrow"><span class="live-dot"></span><span data-content="eyebrow">Research preview · 2026</span></div>
-        <h1 class="display" data-content="title">RevoHuman</h1>
-        <h2 class="hero-subtitle" data-content="subtitle">High-fidelity human demonstrations for contact-grounded dexterous manipulation.</h2>
-        <p class="hero-deck" data-content="heroDeck">A wearable multimodal capture system that records how humans see, move and make contact — synchronizing egocentric RGB, 21-DoF hand kinematics, wrist pose and tactile signals into robot-learning-ready trajectories.</p>
-        <div class="hero-cta">
-          <a class="pill" href="#system">Explore the system ↓</a>
-          <a class="text-link" href="#paper">Paper & citation ↗</a>
+  <!-- teaser -->
+  <div class="wrap-wide">
+    <figure>
+      <div class="fig fig-pair">
+        <img src="figs/glove-render-front.png" alt="RevoHuman data-collection glove, front view" class="zoom">
+        <img src="figs/glove-render-side.png" alt="RevoHuman data-collection glove, side view" class="zoom">
+      </div>
+      <figcaption><b>Figure 1.</b> The RevoHuman data-collection glove: a side-mounted 21-DoF exoskeleton with magnetic joint encoders and full-palm thin-film tactile sensing, worn over a stretchable support glove.</figcaption>
+    </figure>
+  </div>
+
+  <!-- ================= ABSTRACT ================= -->
+  <section id="abstract">
+    <div class="wrap">
+      <h2>Abstract</h2>
+      <p class="abstract">Contact-rich dexterous manipulation requires continuous hand configuration, wrist motion, and contact state, which a single egocentric video cannot recover reliably. Existing approaches generally struggle to satisfy task capability, data fidelity, and collection efficiency at scale simultaneously. We present <b>RevoHuman</b>, which records human demonstrations directly with 21-DoF side-mounted exoskeleton magnetic encoders on both hands, full-palm thin-film piezoresistive tactile sensing, head-mounted stereo cameras, wrist-mounted cameras, and optical tracking sensors, and generates trajectories through unified calibration, real-time acquisition, and time synchronization. Human demonstrations preserve task capability, while the input of multiple data modalities provides rich information and describes the manipulation task and scene more completely. The integrated deployment and donning procedure frees the data-collection operator from a fixed workstation and improves collection efficiency at scale. We additionally provide a layered evaluation methodology covering sensor accuracy, end-to-end fidelity of collected data, and comparisons of task-capability range and collection efficiency across collection methods.</p>
+    </div>
+  </section>
+
+  <!-- ================= OVERVIEW VIDEO ================= -->
+  <section>
+    <div class="wrap">
+      <h2>Video</h2>
+      <p class="lede">A short tour of the hardware, the data pipeline, and the evaluation.</p>
+      <!-- expected file: videos/overview.mp4 -->
+      <div class="video-slot" data-src="videos/overview.mp4">
+        <div class="ph">
+          <div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div>
+          <div class="t">Overview video — coming soon</div>
+          <div class="f">videos/overview.mp4</div>
         </div>
       </div>
+      <div class="video-note">placeholder — drop videos/overview.mp4 into ./videos/ to enable playback</div>
+    </div>
+  </section>
 
-      <div class="hero-visual reveal" aria-label="RevoHuman system visual">
-        <div class="hero-grid"></div>
-        <svg class="handviz" viewBox="0 0 900 720" role="img" aria-label="Abstract hand capture visualization">
-          <defs>
-            <filter id="glow"><feGaussianBlur stdDeviation="6" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <linearGradient id="lineFade" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".95"/><stop offset="1" stop-color="currentColor" stop-opacity=".22"/></linearGradient>
-          </defs>
-          <g class="scan-arcs" fill="none" stroke="currentColor" opacity=".24">
-            <ellipse cx="450" cy="380" rx="330" ry="225" />
-            <ellipse cx="450" cy="380" rx="250" ry="170" />
-            <ellipse cx="450" cy="380" rx="170" ry="116" />
-          </g>
-          <g class="skeleton" fill="none" stroke="url(#lineFade)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M455 585 L456 474 L440 388 L407 300 L380 213"/>
-            <path d="M456 474 L506 374 L527 260 L532 168"/>
-            <path d="M456 474 L571 400 L624 307 L646 228"/>
-            <path d="M456 474 L610 449 L688 389 L731 329"/>
-            <path d="M444 472 L338 430 L267 376 L221 323"/>
-            <path d="M444 472 L337 488 L251 485 L190 470"/>
-            <path d="M456 585 L555 596 L628 575"/>
-          </g>
-          <g class="joints" filter="url(#glow)"></g>
-          <g class="contact-points" fill="currentColor">
-            <circle cx="380" cy="213" r="9"/><circle cx="532" cy="168" r="9"/><circle cx="646" cy="228" r="9"/><circle cx="731" cy="329" r="9"/><circle cx="221" cy="323" r="9"/><circle cx="190" cy="470" r="9"/>
-          </g>
-        </svg>
-        <div class="visual-label label-a"><span>21 DoF / hand</span><small>magnetic encoders · 200 Hz</small></div>
-        <div class="visual-label label-b"><span>Full-palm touch</span><small>direct normal-contact sensing</small></div>
-        <div class="visual-label label-c"><span>4× RGB streams</span><small>stereo ego + dual wrist</small></div>
-        <div class="visual-label label-d"><span>&lt; 1 ms</span><small>hand sensing timestamp sync</small></div>
-        <div class="visual-caption mono">HUMAN → SENSORS → ALIGNED TRAJECTORY</div>
+  <!-- ================= THREE GOALS ================= -->
+  <section>
+    <div class="wrap-wide">
+      <div class="wrap" style="padding:0">
+        <h2>One system, three goals at once</h2>
+        <p class="lede">Existing pipelines trade task capability, data fidelity, and collection efficiency off against each other. RevoHuman is designed so that all three hold within the same collection process.</p>
       </div>
-
-      <div class="hero-specs reveal" id="heroSpecs"></div>
-    </section>
-
-    <section id="overview" class="manifesto section-pad border-top">
-      <div class="section-index mono">01 / OVERVIEW</div>
-      <div class="manifesto-grid">
-        <h2 class="statement reveal" data-content="statement">Robots need more than video.<br><span>They need grounded interaction.</span></h2>
-        <div class="manifesto-copy reveal">
-          <p data-content="overviewP1">Contact-rich manipulation depends on continuous hand configuration, wrist motion and physical contact. A single egocentric camera cannot reliably recover all three.</p>
-          <p data-content="overviewP2">RevoHuman combines human task capability with direct multimodal measurement and a portable data pipeline, targeting the three-way trade-off between task capability, data fidelity and scalable collection.</p>
-        </div>
-      </div>
-      <div class="principles" id="principles"></div>
-    </section>
-
-    <section id="system" class="system section-pad border-top">
-      <div class="section-index mono">02 / SYSTEM</div>
-      <div class="section-head reveal">
-        <h2>Capture the full interaction,<br>not a proxy for it.</h2>
-        <p>RevoHuman directly measures the motion and contact variables that matter for dexterous manipulation, then aligns them with human-centered visual context.</p>
-      </div>
-
-      <div class="architecture reveal">
-        <div class="arch-rail arch-human">
-          <span class="arch-kicker mono">SOURCE</span>
-          <strong>Human operator</strong>
-          <small>natural bimanual task execution</small>
-        </div>
-        <div class="arch-arrow">→</div>
-        <div class="arch-sensors">
-          <span class="arch-kicker mono">DIRECT SENSING</span>
-          <div class="sensor-row"><span>Head stereo RGB</span><b>190°</b></div>
-          <div class="sensor-row"><span>Dual wrist RGB</span><b>124°</b></div>
-          <div class="sensor-row"><span>Hand joint angles</span><b>21 DoF × 2</b></div>
-          <div class="sensor-row"><span>Palm & finger touch</span><b>200 Hz</b></div>
-          <div class="sensor-row"><span>Head + wrist pose</span><b>6 DoF</b></div>
-        </div>
-        <div class="arch-arrow">→</div>
-        <div class="arch-sync">
-          <span class="arch-kicker mono">ALIGNMENT</span>
-          <strong>Calibrate + synchronize</strong>
-          <small>common geometry · common timeline · quality masks</small>
-          <div class="pulse-line"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-        </div>
-        <div class="arch-arrow">→</div>
-        <div class="arch-rail arch-output">
-          <span class="arch-kicker mono">OUTPUT</span>
-          <strong>Grounded trajectory</strong>
-          <small>vision + kinematics + touch</small>
-        </div>
-      </div>
-
-      <div class="bento" id="hardwareCards"></div>
-    </section>
-
-    <section id="data" class="data-story border-top">
-      <div class="sticky-copy section-pad">
-        <div class="section-index mono">03 / DATA</div>
-        <div class="sticky-inner reveal">
-          <h2>One demonstration.<br>Multiple synchronized truths.</h2>
-          <p>Every trajectory keeps raw timestamps, mapped timestamps, interpolation spans and quality masks — preserving the distinction between what was physically sampled and what was aligned after capture.</p>
-          <div class="legend mono"><span><i></i> DIRECT MEASUREMENT</span><span><i></i> ALIGNED CONTEXT</span></div>
-        </div>
-      </div>
-      <div class="data-panels" id="dataPanels"></div>
-    </section>
-
-    <section class="pipeline section-pad border-top">
-      <div class="section-index mono">04 / PIPELINE</div>
-      <div class="section-head reveal">
-        <h2>From human behavior<br>to reusable physical data.</h2>
-        <p>A compact data chain turns wearable sensing into standardized trajectories for visualization, retargeting, policy learning and downstream robot adaptation.</p>
-      </div>
-      <div class="pipeline-track" id="pipeline"></div>
-    </section>
-
-    <section id="evaluation" class="evaluation section-pad border-top">
-      <div class="section-index mono">05 / EVALUATION</div>
-      <div class="section-head reveal">
-        <h2>Evaluate the system<br>from sensor to task.</h2>
-        <p>The paper proposes a layered protocol. This page intentionally marks unpublished result fields as pending rather than inventing benchmark numbers.</p>
-      </div>
-      <div class="eval-grid" id="evalGrid"></div>
-      <div class="task-strip reveal">
-        <div><span class="mono">TASK SUITE</span><strong>200 manipulation tasks</strong></div>
-        <p>Fine pinching · in-hand manipulation · tool use · twisting & insertion · deformables · constrained spaces · bimanual coordination.</p>
-      </div>
-    </section>
-
-    <section class="stack section-pad border-top">
-      <div class="section-index mono">06 / DATA STACK</div>
-      <div class="section-head reveal">
-        <h2>Not one source.<br>A complementary data stack.</h2>
-        <p>RevoHuman is designed as the high-fidelity human grounding layer between highly scalable visual/simulation data and embodiment-specific robot data.</p>
-      </div>
-      <div class="stack-table reveal" id="stackTable"></div>
-    </section>
-
-    <section id="paper" class="paper section-pad border-top">
-      <div class="paper-card reveal">
-        <div>
-          <div class="section-index mono">07 / PAPER</div>
-          <h2 data-content="paperTitle">RevoHuman: High-Fidelity Human Demonstration Capture for Contact-Grounded Dexterous Manipulation</h2>
-          <p data-content="paperDescription">Technical paper draft covering the wearable system, kinematics, tactile sensing, visual capture, calibration, synchronization and evaluation protocol.</p>
-          <div class="paper-actions">
-            <a class="pill" href="assets/revohuman-paper.pdf" data-optional-link>Download PDF ↗</a>
-            <button class="text-btn" id="copyCitation">Copy citation</button>
+      <div class="grid3">
+        <div class="card">
+          <div class="num">01</div>
+          <h3>Task capability</h3>
+          <p>Tasks are performed by a human operator, not bounded by a target robot's capability ceiling or a teleoperation interface. The side-mounted exoskeleton frees the palm and fingertips, preserving natural bimanual dexterity.</p>
+          <div class="chips">
+            <span class="chip">human task knowledge</span>
+            <span class="chip">tactile closed-loop</span>
+            <span class="chip">full finger ROM</span>
           </div>
         </div>
-        <pre class="citation" id="citation"></pre>
+        <div class="card">
+          <div class="num">02</div>
+          <h3>Data fidelity</h3>
+          <p>Joint angles, wrist poses, and contact state are measured directly by dedicated sensors — never estimated secondarily from RGB — and aligned onto one spatio-temporal timeline.</p>
+          <div class="chips">
+            <span class="chip">21 DoF / hand @ 200 Hz</span>
+            <span class="chip">6-DoF wrist pose</span>
+            <span class="chip">full-palm normal tactile</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="num">03</div>
+          <h3>Collection efficiency at scale</h3>
+          <p>A portable wireless pipeline with rapid donning, unified calibration, automatic packaging, and quality inspection — no robot body or fixed teleoperation workstation occupied.</p>
+          <div class="chips">
+            <span class="chip">4 h battery</span>
+            <span class="chip">Wi-Fi / Ethernet</span>
+            <span class="chip">cross-operator reuse</span>
+          </div>
+        </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <footer class="footer section-pad border-top">
-    <div class="footer-title">RevoHuman</div>
-    <div class="footer-meta">
-      <span>Human Demonstration · Dexterous Manipulation · Multimodal Capture</span>
-      <span>© <span id="year"></span> · Static research page</span>
+  <!-- ================= SYSTEM ================= -->
+  <section id="system">
+    <div class="wrap">
+      <h2>Inside RevoHuman</h2>
+      <p class="lede">A wearable multimodal system for human bimanual manipulation: bilateral exoskeleton tactile gloves, head-mounted stereo RGB, monocular RGB at both wrists, spatial trackers for the head and both hands, and a unified acquisition unit.</p>
+    </div>
+    <div class="wrap-wide">
+      <div class="tbl-scroll">
+        <table>
+          <thead>
+            <tr><th>Module</th><th>Configuration</th><th>Direct observation</th><th>Parameters</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Exoskeleton + magnetic encoders</td>
+              <td>one set per hand</td>
+              <td>21-DoF joint angles per hand</td>
+              <td><span class="mono">200 Hz · 180×145×35 mm per hand</span></td>
+            </tr>
+            <tr>
+              <td>Thin-film piezoresistive tactile</td>
+              <td>phalanges &amp; palm, both hands</td>
+              <td>normal contact response</td>
+              <td><span class="mono">0.5 mm thick · 200 Hz</span></td>
+            </tr>
+            <tr>
+              <td>Wrist-mounted camera</td>
+              <td>one per wrist</td>
+              <td>near-field monocular RGB facing the palm</td>
+              <td><span class="mono">1080p @ 30 fps · 124° FoV</span></td>
+            </tr>
+            <tr>
+              <td>Head-mounted stereo camera</td>
+              <td>one set</td>
+              <td>human-centered environment RGB</td>
+              <td><span class="mono">1080p · 190° FoV</span></td>
+            </tr>
+            <tr>
+              <td>Spatial localization trackers</td>
+              <td>head + back of each hand</td>
+              <td>6-DoF pose of head and both wrists</td>
+              <td><span class="mono">rigidly attached to wearable structure</span></td>
+            </tr>
+            <tr>
+              <td>Acquisition &amp; output unit</td>
+              <td>one set</td>
+              <td>synchronization, power, transmission</td>
+              <td><span class="mono">sampling-sync error &lt; 1 ms · 5 V · 4 h battery · Ethernet / Wi-Fi</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="wrap" style="padding:0">
+        <div class="complist">
+          <div class="comp">
+            <div class="n">1</div>
+            <div class="body">
+              <div class="name">Kinematic exoskeleton <span class="tag">21 DoF / hand</span></div>
+              <p>Linkages and sensing units sit on the sides of the fingers, freeing the primary contact areas of palm and fingertips. A fully rigid internal chain gives adjacent bodies determinate geometric constraints — a calibratable basis for per-phalanx pose reconstruction.</p>
+            </div>
+          </div>
+          <div class="comp">
+            <div class="n">2</div>
+            <div class="body">
+              <div class="name">Magnetic joint encoders <span class="tag">200 Hz</span></div>
+              <p>Small magnetic encoders seat stably against each joint's rotational axis and directly acquire all 21 joint angles per hand at 200 Hz, feeding the exoskeleton forward kinematics.</p>
+            </div>
+          </div>
+          <div class="comp">
+            <div class="n">3</div>
+            <div class="body">
+              <div class="name">Compliant TPU interface</div>
+              <p>Tuned gel hardness at the phalanges and palm balances compliance against contact deformation, reconciling manipulation dexterity, task success rate, and contact-data stability.</p>
+            </div>
+          </div>
+          <div class="comp">
+            <div class="n">4</div>
+            <div class="body">
+              <div class="name">Thin-film tactile sensing <span class="tag">0.5 mm</span></div>
+              <p>Piezoresistive film covers the phalanges and palm surface, acquiring normal contact response at 200 Hz. At 0.5 mm thick it leaves grasping space and the wearer's own tactile feedback essentially intact.</p>
+            </div>
+          </div>
+          <div class="comp">
+            <div class="n">5</div>
+            <div class="body">
+              <div class="name">Multi-view RGB <span class="tag">3 viewpoints</span></div>
+              <p>Head-mounted stereo records the task environment at 190° FoV; two wrist cameras rigidly mounted on the exoskeletons face the palm at 124° FoV, supplementing contact regions and occluded near-field detail.</p>
+            </div>
+          </div>
+          <div class="comp">
+            <div class="n">6</div>
+            <div class="body">
+              <div class="name">Tracking &amp; synchronization <span class="tag">&lt; 1 ms</span></div>
+              <p>Head and hand trackers live in one shared world frame; a lightweight PTP mechanism aligns the tactile/encoder sampling timestamps of both hands to a common IPC clock with sub-millisecond error.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <figure style="margin-top:34px">
+        <div class="fig"><img src="figs/joint-layout-21dof.png" alt="The 21 manipulation DoF per hand and their sensor placement" class="zoom"></div>
+        <figcaption><b>Figure 2.</b> The 21 manipulation degrees of freedom defined per hand: side-swing joints (green) and flexion joints (blue) across thumb and fingers, each coupled to a dedicated magnetic encoder.</figcaption>
+      </figure>
+
+      <figure style="margin-top:34px">
+        <div class="fig fig-pair cover">
+          <img src="figs/glove-photo-1.jpg" alt="RevoHuman glove prototype, dorsal view" class="zoom">
+          <img src="figs/glove-photo-3.jpg" alt="RevoHuman glove prototype, detail view" class="zoom">
+        </div>
+        <figcaption><b>Figure 3.</b> Prototype hardware: the instrumented glove with metal finger linkages and the dorsal acquisition hub.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ================= PIPELINE ================= -->
+  <section id="pipeline">
+    <div class="wrap">
+      <h2>From human motion to aligned demonstrations</h2>
+      <p class="lede">One calibration and synchronization chain turns bimanual human operation into spatio-temporally aligned visual, kinematic, and tactile trajectories.</p>
+      <div class="chain">
+        <div class="node"><b>Human operator</b><span>performs bimanual tasks</span></div>
+        <div class="arr">→</div>
+        <div class="node"><b>Direct sensing</b><span>gloves: 21 DoF + tactile<br>cameras: head + wrists<br>trackers: 6-DoF poses</span></div>
+        <div class="arr">→</div>
+        <div class="node"><b>Calibration &amp; PTP sync</b><span>unified coordinates + quality flags</span></div>
+        <div class="arr">→</div>
+        <div class="node"><b>Aligned demonstrations</b><span>vision + kinematics + tactile</span></div>
+        <div class="arr">→</div>
+        <div class="node"><b>Standardized output</b><span>Ethernet / Wi-Fi</span></div>
+      </div>
+      <p class="muted" style="font-size:14px;margin-top:18px">Two timestamp types are distinguished on a common timeline: tactile and joint encoders record the physical sampling instant, while trackers and cameras are aligned by arrival time. Every sample stores its timestamp source, interpolation span, and quality mask. Post-processing runs coordinate transformation, modality association, anomaly detection, and standardized packaging, flagging encoder out-of-range, tactile saturation, tracker loss, frame drops, and out-of-tolerance timing residuals.</p>
+      <div class="chips" style="margin-top:14px">
+        <span class="chip">sampling-sync error &lt; 1 ms</span>
+        <span class="chip">200 Hz joint + tactile</span>
+        <span class="chip">30 fps video</span>
+        <span class="chip">quality masks per sample</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DATA STACK ================= -->
+  <section>
+    <div class="wrap">
+      <h2>A complementary data stack</h2>
+      <p class="lede">Four categories of embodied data form a complementary stack. Simulation and purely egocentric video scale easily and mainly serve pre-training; same-robot teleoperation data is embodiment-consistent but hard to scale. RevoHuman sits between the two as a high-fidelity human grounding layer.</p>
+    </div>
+    <div class="wrap-wide">
+      <figure>
+        <div class="fig"><img src="figs/data-stack.png" alt="The complementary data stack of four categories of embodied manipulation data" class="zoom"></div>
+        <figcaption><b>Figure 4.</b> The complementary data stack of the four categories of embodied manipulation data. Layer area grows with collection efficiency at scale and attainable scale ceiling — it is not an absolute ranking of quality or training value. <i>(figure labels in Chinese; English version in progress)</i></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ================= EVALUATION ================= -->
+  <section id="evaluation">
+    <div class="wrap-wide">
+      <div class="wrap" style="padding:0">
+        <h2>Layered evaluation</h2>
+        <p class="lede">From components to the whole system: sensor accuracy first, then end-to-end collection fidelity, then task-capability range and collection efficiency at scale. Each layer has its own threshold — no weighted average can hide a weak dimension.</p>
+      </div>
+      <div class="grid3">
+        <div class="card">
+          <div class="num">Layer 1</div>
+          <h3>Sensor performance</h3>
+          <p>Encoder accuracy and magnetic robustness against an independent angular reference; tracker localization accuracy against a high-precision pose reference; tactile accuracy, hysteresis, drift, and repeatability under graded standard loads.</p>
+          <div class="chips"><span class="chip">MAE / RMSE / max error</span><span class="chip">crosstalk</span><span class="chip">drift</span></div>
+        </div>
+        <div class="card">
+          <div class="num">Layer 2</div>
+          <h3>Collection fidelity</h3>
+          <p>Rigid-body coupling accuracy of the reconstructed hand against external markers across joints, speeds, donnings, and operators; kinematic replay in a digital hand model and full interaction replay in simulation.</p>
+          <div class="chips"><span class="chip">endpoint error</span><span class="chip">contact-event F1</span><span class="chip">replay success</span></div>
+        </div>
+        <div class="card">
+          <div class="num">Layer 3</div>
+          <h3>Task range &amp; throughput</h3>
+          <p>A unified suite of 200 manipulation tasks, compared against purely egocentric collection and real-robot teleoperation in a randomized crossover design, counting donning, calibration, resets, and retries toward total time.</p>
+          <div class="chips"><span class="chip">200-task suite</span><span class="chip">success rate</span><span class="chip">trajectories / operator-hour</span></div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="v">21</div><div class="k">DoF sensed per hand, at 200 Hz</div></div>
+        <div class="stat"><div class="v">&lt;1<small> ms</small></div><div class="k">sampling-timestamp sync error across both hands</div></div>
+        <div class="stat"><div class="v">200</div><div class="k">manipulation tasks in the unified evaluation suite</div></div>
+        <div class="stat"><div class="v">4<small> h</small></div><div class="k">battery life for portable wireless collection</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VIDEOS ================= -->
+  <!--
+    Expected video files (all optional; slots with a missing file stay placeholders):
+      videos/overview.mp4
+      videos/task-pinch.mp4  videos/task-inhand.mp4  videos/task-tool.mp4
+      videos/task-twist.mp4  videos/task-deformable.mp4  videos/task-bimanual.mp4
+      videos/viz-kinematics.mp4  videos/viz-tactile.mp4
+      videos/viz-sync.mp4  videos/viz-replay.mp4
+  -->
+  <section id="videos">
+    <div class="wrap-wide">
+      <div class="wrap" style="padding:0">
+        <h2>Demonstration videos</h2>
+        <p class="lede">Collection sessions and signal visualizations, grouped by category. Scroll horizontally. <b>All slots below are placeholders</b> — drop the matching .mp4 into <span style="font-family:var(--mono);font-size:13px">videos/</span> and it will play in place.</p>
+      </div>
+
+      <div class="rail-head">
+        <h3>Data-collection sessions</h3>
+        <span class="count">6 clips</span>
+        <div class="arrows">
+          <button class="arrowbtn" data-rail="rail1" data-dir="-1" aria-label="scroll left"><svg viewBox="0 0 16 16" fill="none"><path d="M10 3.5 5.5 8l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="arrowbtn" data-rail="rail1" data-dir="1" aria-label="scroll right"><svg viewBox="0 0 16 16" fill="none"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+      <div class="rail" id="rail1">
+        <div class="clip">
+          <div class="video-slot" data-src="videos/task-pinch.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">task-pinch.mp4</div></div></div>
+          <div class="cap"><b>Fine pinch grasping</b><span class="tag gray">ego view</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot" data-src="videos/task-inhand.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">task-inhand.mp4</div></div></div>
+          <div class="cap"><b>In-hand manipulation</b><span class="tag gray">ego view</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot" data-src="videos/task-tool.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">task-tool.mp4</div></div></div>
+          <div class="cap"><b>Tool use</b><span class="tag gray">wrist view</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot" data-src="videos/task-twist.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">task-twist.mp4</div></div></div>
+          <div class="cap"><b>Twisting &amp; insertion</b><span class="tag gray">wrist view</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot" data-src="videos/task-deformable.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">task-deformable.mp4</div></div></div>
+          <div class="cap"><b>Deformable objects</b><span class="tag gray">ego view</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot" data-src="videos/task-bimanual.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">task-bimanual.mp4</div></div></div>
+          <div class="cap"><b>Bimanual coordination</b><span class="tag gray">ego view</span></div>
+        </div>
+      </div>
+
+      <div class="rail-head">
+        <h3>Signals &amp; replay</h3>
+        <span class="count">4 clips</span>
+        <div class="arrows">
+          <button class="arrowbtn" data-rail="rail2" data-dir="-1" aria-label="scroll left"><svg viewBox="0 0 16 16" fill="none"><path d="M10 3.5 5.5 8l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="arrowbtn" data-rail="rail2" data-dir="1" aria-label="scroll right"><svg viewBox="0 0 16 16" fill="none"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+      <div class="rail" id="rail2">
+        <div class="clip">
+          <div class="video-slot" data-src="videos/viz-kinematics.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">viz-kinematics.mp4</div></div></div>
+          <div class="cap"><b>Kinematic reconstruction</b><span class="tag gray">21 DoF</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot" data-src="videos/viz-tactile.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">viz-tactile.mp4</div></div></div>
+          <div class="cap"><b>Tactile response</b><span class="tag gray">full palm</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot" data-src="videos/viz-sync.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">viz-sync.mp4</div></div></div>
+          <div class="cap"><b>Timeline alignment</b><span class="tag gray">&lt; 1 ms</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot" data-src="videos/viz-replay.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">viz-replay.mp4</div></div></div>
+          <div class="cap"><b>Simulation replay</b><span class="tag gray">fidelity check</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CITATION ================= -->
+  <section id="citation">
+    <div class="wrap">
+      <h2>Citation</h2>
+      <div class="cite">
+        <button class="copybtn" id="copybtn">Copy</button>
+        <pre id="bibtex">@article{revohuman2026,
+  title   = {RevoHuman: High-Fidelity Human Demonstration Capture for
+             Contact-Grounded Dexterous Manipulation},
+  author  = {Author One and Author Two and Author Three},  % TODO: real author list
+  year    = {2026},
+  journal = {arXiv preprint}
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <b style="color:var(--muted)">RevoHuman</b> project page — demo build. Figures are draft assets from the paper; video slots are placeholders awaiting footage. Page design follows <a class="inline" href="https://openwam-official.github.io/">OpenWAM</a>'s project-page layout.
     </div>
   </footer>
+</main>
 
-  <div class="toast" id="toast">Citation copied</div>
-  <script src="content.js"></script>
-  <script src="script.js"></script>
+<div class="lb" id="lb"><img alt="figure enlarged"></div>
+
+<script>
+  /* Video slots: upgrade placeholder -> <video> when the file actually exists. */
+  document.querySelectorAll('.video-slot').forEach(function(slot){
+    var src = slot.getAttribute('data-src');
+    if(!src) return;
+    var v = document.createElement('video');
+    v.controls = true; v.muted = true; v.loop = true; v.playsInline = true;
+    v.preload = 'metadata'; v.style.display = 'none';
+    var s = document.createElement('source');
+    s.src = src; s.type = 'video/mp4';
+    v.appendChild(s);
+    slot.appendChild(v);
+    s.addEventListener('error', function(){ v.remove(); });          /* missing file: keep placeholder */
+    v.addEventListener('loadedmetadata', function(){
+      var ph = slot.querySelector('.ph');
+      if(ph) ph.style.display = 'none';
+      v.style.display = 'block';
+    });
+  });
+
+  /* Carousel arrows */
+  document.querySelectorAll('.arrowbtn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var rail = document.getElementById(btn.dataset.rail);
+      if(!rail) return;
+      var card = rail.querySelector('.clip');
+      var step = card ? card.getBoundingClientRect().width + 14 : 320;
+      rail.scrollBy({left: step * parseInt(btn.dataset.dir,10), behavior:'smooth'});
+    });
+  });
+
+  /* BibTeX copy */
+  var copybtn = document.getElementById('copybtn');
+  copybtn.addEventListener('click', function(){
+    var txt = document.getElementById('bibtex').innerText;
+    function done(){ copybtn.textContent = 'Copied'; setTimeout(function(){ copybtn.textContent = 'Copy'; }, 1500); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done, done);
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); }catch(e){}
+      ta.remove(); done();
+    }
+  });
+
+  /* Figure lightbox */
+  var lb = document.getElementById('lb'), lbImg = lb.querySelector('img');
+  document.querySelectorAll('img.zoom').forEach(function(img){
+    img.addEventListener('click', function(){ lbImg.src = img.src; lb.classList.add('open'); });
+  });
+  lb.addEventListener('click', function(){ lb.classList.remove('open'); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') lb.classList.remove('open'); });
+</script>
 </body>
 </html>
