@@ -1,78 +1,114 @@
 # RevoHuman demo video shot list
 
-11 slots are already wired into `index.html` (`§Video` + `§Demonstration videos`). **0 files present** — each slot renders a "coming soon" placeholder and auto-upgrades to a real player the moment its file exists at the exact path below. Nothing else on the page has to change.
+Drop the files into `videos/` under these exact filenames. Lengths are estimates of the **finished clip** (lead-in and hold included), not shooting time. Every clip on the page plays `muted + loop`, so keep the opening and closing frames close to each other to loop cleanly.
 
-## Export spec — applies to all 11 clips
+## A. Overview — 1 clip
 
-| Constraint | Value | Why |
+| File | Where | Est. length |
 |---|---|---|
-| Container / codec | MP4, H.264 High, `yuv420p`, `+faststart` | The page declares a single `<source type="video/mp4">` with no WebM fallback; a non-H.264 MP4 fails to load and the slot silently stays a placeholder. |
-| Aspect ratio | **16:9 exactly** | `.video-slot{aspect-ratio:16/9}` + `object-fit:cover` — any other ratio is centre-cropped, so edges are lost. |
-| Resolution / fps | 1920×1080, 30 fps | Rail cards render **300 px wide (169 px tall)**; the overview renders ≈712 px wide. 1080p is already oversampled. |
-| Audio | none (`-an`) | Player is `muted loop playsInline controls` — audio is never heard. |
-| Duration | overview 10–20 s, rail clips 4–8 s | Clips loop; short enough to read at a glance. |
-| File size | ≤ 8–10 MB each | The repo already ships 8.7 MB of figures and Pages serves straight from the repo. |
-| Filenames | exact, lowercase, no spaces | `data-src` paths are literal. |
+| `videos/overview.mp4` | `§Video`, right after the Abstract | ≈15 s |
 
-Legibility is the binding constraint: a rail clip is 300 px wide on a 1080p-class display, so shoot tight on the hand and contact region — one action per clip, no wide establishing shots with a tiny hand.
+**`videos/overview.mp4` — system overview**
+- Content: silent tour that walks the line hardware → task → data: operator dons the glove, performs one dexterous task, a glimpse of joint and tactile signals.
+- Framing: the only clip shown large (≈712 px wide), so a modest amount of environment is fine — the hand still owns the frame.
+- Beats: 0–2 s lead-in (hand resting next to the object) → 2–12 s one complete grasp–manipulate–place cycle → 12–15 s hold on the final pose.
+- Must show: the whole glove (side-mounted exoskeleton, metal finger linkages, dorsal acquisition hub) and one complete task.
+- Keep out: cables, table clutter, other people's hands or faces, brand logos, backlight, lens smudges.
+- Backs the page copy: `§Video` — "A short tour of the hardware, the data pipeline, and the evaluation."
 
-## A. Overview — 1 clip, full text column
+**Section total ≈ 15 s**
 
-| File | Section | Content | Duration |
+## B. Data-collection sessions — 6 clips (camera footage)
+
+ego = head-mounted camera on the operator · wrist = wrist-mounted camera on the glove.
+The rail cards render only 300 px wide, so the hand and the contact region must fill the frame (aim for the hand at ≥60% of frame height), and one clip carries one action.
+
+| File | Caption | View | Est. length |
 |---|---|---|---|
-| `videos/overview.mp4` | `§Video`, directly after the Abstract | Silent tour: operator dons the glove → performs one dexterous task → a glimpse of joint + tactile signals. This is the only clip shown large, so it carries the system story. | 10–20 s |
+| `videos/task-pinch.mp4` | Fine pinch grasping | ego | ≈5 s |
+| `videos/task-inhand.mp4` | In-hand manipulation | ego | ≈8 s |
+| `videos/task-tool.mp4` | Tool use | wrist | ≈6 s |
+| `videos/task-twist.mp4` | Twisting & insertion | wrist | ≈7 s |
+| `videos/task-deformable.mp4` | Deformable objects | ego | ≈6 s |
+| `videos/task-bimanual.mp4` | Bimanual coordination | ego | ≈8 s |
 
-## B. Data-collection sessions — rail 1, 6 clips (camera footage)
+**`task-pinch.mp4` — fine pinch grasping (≈5 s)**
+- Content: thumb and index pinch a small object (nut, pill, M3 screw) — the point is the fingertip contact.
+- Framing: ego view, 30–45° downward, object and the two fingers together filling the frame.
+- Beats: 0–1.5 s hand enters, fingers open → 1.5–3.5 s pinch closed and lifted slightly → 3.5–5 s hold.
+- Must be legible: the contact points at the fingertips; the object held steadily, not slipping.
+- Keep out: a hand reduced to a small patch in frame; irrelevant table clutter.
 
-| File | Caption | Camera | Must be visible |
+**`task-inhand.mp4` — in-hand manipulation (≈8 s)**
+- Content: the object is re-oriented inside the palm (e.g. pinch grip → palmar grasp, or rolled along the fingers).
+- Framing: ego view, closer, so the changing relative positions of the fingers read.
+- Beats: 0–2 s lead-in → 2–6.5 s progressive re-orientation → 6.5–8 s hold in the new pose. 8 s because in-hand motion needs time to be legible at all.
+- Must be legible: the object's change of position relative to the palm, not merely a hand moving.
+- Keep out: fingers fully occluding the object so no re-orientation can be seen.
+
+**`task-tool.mp4` — tool use (≈6 s)**
+- Content: grasp and use a tool (screwdriver, tweezers, cable-tie gun) — the grip and the tool–object contact are the subject.
+- Framing: wrist view, hand and tool filling the frame.
+- Beats: 0–1.5 s lead-in (tool already in hand) → 1.5–4.5 s one tool action → 4.5–6 s hold on contact.
+- Must be legible: how the tool is gripped, and the contact point at its tip.
+- Keep out: only environment or tabletop with no visible grip.
+
+**`task-twist.mp4` — twisting & insertion (≈7 s)**
+- Content: axial rotation → insertion (peg-in-hole, cap twist).
+- Framing: wrist view, shot from the side of the rotation axis — head-on down the axis hides the rotation.
+- Beats: 0–1.5 s lead-in (object aligned) → 1.5–5.5 s rotate and push in → 5.5–7 s hold inserted.
+- Must be legible: the rotation itself plus the final seated insertion.
+- Keep out: an axis-aligned camera (rotation becomes invisible); push-only footage with no twist.
+
+**`task-deformable.mp4` — deformable objects (≈6 s)**
+- Content: cloth, dough or a soft object deforming under the hand.
+- Framing: ego view, hand and the deforming silhouette both visible.
+- Beats: 0–1.5 s lead-in (before contact) → 1.5–4.5 s force applied, deformation continuously visible → 4.5–6 s hold.
+- Must be legible: deformation evolving over time, not a single instant of squash.
+- Keep out: motion so fast the deformation cannot be read within 6 s.
+
+**`task-bimanual.mp4` — bimanual coordination (≈8 s)**
+- Content: both hands on one object (one holds, one manipulates — unscrewing a cap, mating a connector).
+- Framing: ego view that holds both hands; pull back slightly so neither is cropped.
+- Beats: 0–2 s lead-in (both hands placed) → 2–6.5 s coordinated action → 6.5–8 s hold.
+- Must be legible: the division of labour between the hands, not one hand doing everything.
+- Keep out: one hand leaving the frame.
+
+**Section total ≈ 40 s**
+
+## C. Signals & replay — 4 clips (pipeline renders)
+
+These come out of the acquisition / visualisation pipeline as screen recordings or renders, not camera footage. No desktop icons, mouse cursors, notification popups or window chrome in frame.
+
+| File | Caption | Tag | Est. length |
 |---|---|---|---|
-| `videos/task-pinch.mp4` | Fine pinch grasping | ego | Thumb–index pinch on a small object; fingertip contact clearly readable at 300 px. |
-| `videos/task-inhand.mp4` | In-hand manipulation | ego | Object reoriented within the palm across the clip — the case ego view is supposed to cover. |
-| `videos/task-tool.mp4` | Tool use | wrist | Tool grasped and used; wrist view must show grip and contact, not the room. |
-| `videos/task-twist.mp4` | Twisting & insertion | wrist | Axial rotation → insertion (peg-in-hole, cap twist); rotation must read in 4–8 s. |
-| `videos/task-deformable.mp4` | Deformable objects | ego | Cloth / dough / soft object deforming under the hand. |
-| `videos/task-bimanual.mp4` | Bimanual coordination | ego | Both hands cooperating on one object. |
+| `videos/viz-kinematics.mp4` | Kinematic reconstruction | 21 DoF | ≈8 s |
+| `videos/viz-tactile.mp4` | Tactile response | full palm | ≈6 s |
+| `videos/viz-sync.mp4` | Timeline alignment | < 1 ms | ≈5 s |
+| `videos/viz-replay.mp4` | Simulation replay | fidelity check | ≈10 s |
 
-Ego = head-mounted camera on the operator. Wrist = wrist-mounted camera on the glove. Action cams default to 4:3 on many models — set 16:9 in-camera where possible; cropping 4:3 down to 16:9 throws away a third of the sensor.
+**`viz-kinematics.mp4` — kinematic reconstruction (≈8 s)**
+- Content: hand skeleton / URDF driven in real time by the 21 encoder degrees of freedom.
+- Frame and notes: render the digital hand against the human one (side by side or ghosted overlay) so the mapping is visible; side-swing and flexion joints should be distinguishable; opening and closing poses match.
+- Beats: 0–2 s digital hand at rest → 2–6.5 s one full tracking cycle → 6.5–8 s back near the opening pose.
+- Keep out: jitter, mesh interpenetration, or visible desync against the human hand.
 
-## C. Signals & replay — rail 2, 4 clips (pipeline renders, not camera footage)
+**`viz-tactile.mp4` — tactile response (≈6 s)**
+- Content: full-palm tactile map (heatmap) changing with contact.
+- Frame and notes: keep a pressure scale or colour legend so intensity is readable; contact area must visibly track the grasp; full-palm coverage must be apparent rather than a few active channels.
+- Beats: 0–1.5 s no contact (baseline) → 1.5–4.5 s contact and change → 4.5–6 s hold.
+- Keep out: a missing legend (intensity becomes unreadable); a single trace that hides the full-palm layout.
 
-| File | Caption | Tag | Content |
-|---|---|---|---|
-| `videos/viz-kinematics.mp4` | Kinematic reconstruction | 21 DoF | Screen capture: hand skeleton / URDF driven by the 21 encoder degrees of freedom. |
-| `videos/viz-tactile.mp4` | Tactile response | full palm | Tactile map overlaid during contact — must be legible as full-palm coverage. |
-| `videos/viz-sync.mp4` | Timeline alignment | < 1 ms | The alignment plot itself. This clip is the visual backing for the `< 1 ms` tag — do not ship a placeholder graphic here. |
-| `videos/viz-replay.mp4` | Simulation replay | fidelity check | Side-by-side reference vs simulated replay for the fidelity claim. |
+**`viz-sync.mp4` — timeline alignment (≈5 s)**
+- Content: the multi-channel alignment itself — joint angles, tactile and the three RGB streams on one timeline.
+- Frame and notes: axes and units readable, the alignment point visible. This clip is the visual backing for the `< 1 ms` tag on the page — do not ship a decorative graphic here.
+- Beats: just stay legible for 5 s; no fast scrolling.
+- Keep out: no units, no axes, purely decorative curves.
 
-These come out of the acquisition/visualisation pipeline (screen recording or Blender render), not a camera. Two gotchas: renders must still be `yuv420p` (10-bit or 4:4:4 output shows as a black frame in Chrome), and H.264 needs even pixel dimensions — pad odd-sized captures by 1 px.
+**`viz-replay.mp4` — simulation replay (≈10 s)**
+- Content: reference vs simulated replay side by side, backing the fidelity claim.
+- Frame and notes: split left/right or top/bottom, same timeline and same viewpoint; 10 s because the comparison needs time to read.
+- Beats: 0–2 s lead-in → 2–8 s both sides playing the motion in sync → 8–10 s hold.
+- Keep out: mismatched timing or viewpoints between the two sides, which makes comparison impossible.
 
-## Before exporting
-
-- [ ] Glove cabling and the dorsal hub dressed out of frame; no glare off the linkages.
-- [ ] 2 s of steady lead-in, one continuous action, clean hold at the end (the clip loops).
-- [ ] Lighting and white balance consistent across the 6 session clips — they sit side by side in one rail.
-- [ ] No portrait footage, and no rotation metadata left to the player: bake rotation in, then verify with the `ffprobe` line below.
-- [ ] Session clips match what the paper claims; a clip that contradicts a caption costs more than a missing clip.
-
-## Encode — ready to run
-
-`ffmpeg` is installed at `/opt/homebrew/bin/ffmpeg`. This mirrors the page's own crop behaviour (`scale` up to cover, then centre-crop to 16:9):
-
-```bash
-mkdir -p videos && for f in raw/*.mov; do
-  ffmpeg -i "$f" \
-    -vf "scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080" \
-    -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 21 -preset slow \
-    -movflags +faststart -an "videos/$(basename "${f%.*}").mp4"
-done
-```
-
-## Verify each file before committing
-
-```bash
-ffprobe -v error -select_streams v:0 \
-  -show_entries stream=codec_name,width,height,pix_fmt,avg_frame_rate -show_entries format=duration,size \
-  -of default=nw=1 videos/task-pinch.mp4
-```
-
-Expect `codec_name=h264`, `width=1920`, `height=1080`, `pix_fmt=yuv420p`. Then load the page: the matching slot swaps its placeholder for the player on `loadedmetadata`. If a slot still says "coming soon", the file is mistyped or not H.264 — the browser reports nothing.
+**Section total ≈ 29 s**
