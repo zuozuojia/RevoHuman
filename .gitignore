@@ -1,10 +1,19 @@
-# Keep original videos outside Git; serve published clips over HTTPS.
+# Keep original videos outside Git, except the published demonstration clips.
 *.[mM][pP]4
 *.[mM][oO][vV]
 *.[mM]4[vV]
 *.[wW][eE][bB][mM]
 *.[mM][kK][vV]
 *.[aA][vV][iI]
+!/figs/task-pinch.mp4
+!/figs/task-inhand.mp4
+!/figs/task-tool.mp4
+!/figs/task-twist.mp4
+!/figs/task-deformable.mp4
+!/figs/task-bimanual.mp4
+!/figs/viz-kinematics.mp4
+!/figs/viz-tactile.mp4
+!/figs/viz-replay.mp4
 .DS_Store
 
 # Independent local manuscript repository; not a website dependency.

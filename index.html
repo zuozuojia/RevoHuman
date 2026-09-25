@@ -5,7 +5,7 @@
 
   HOW TO ADD VIDEOS:
     Drop .mp4 files into ./videos/ using the filenames referenced in data-src
-    attributes (e.g. videos/overview.mp4). Slots auto-upgrade from placeholder
+    attributes (e.g. videos/viz-sync.mp4). Slots auto-upgrade from placeholder
     to a real <video> player when the file exists. Full list of expected
     filenames is printed in the "Demonstration videos" section comment below.
 
@@ -86,6 +86,9 @@
   .fig img{display:block;width:100%;height:auto}
   .fig-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .fig-pair.cover img{aspect-ratio:4/3;object-fit:cover}
+  .fig-pair.data-figures{grid-template-columns:1.45fr 1fr;align-items:center;
+                       padding:16px;gap:16px;background:#fff}
+  .fig-pair.data-figures img{min-width:0;height:auto;object-fit:contain}
   figcaption{margin-top:12px;font-size:13px;line-height:1.55;color:var(--muted);text-align:center}
   figcaption b{color:var(--fg);font-weight:600}
   .zoom{cursor:zoom-in}
@@ -175,6 +178,9 @@
   .clip .cap{margin-top:9px;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .clip .cap b{font-weight:600}
   .clip .video-slot{border-radius:10px}
+  #rail1 .video-slot{aspect-ratio:1280/1354}
+  #rail1 .video-slot video{object-fit:contain}
+  #rail2 .video-slot video{object-fit:contain}
   .clip .ph .play{width:40px;height:40px}
   .clip .ph .t{font-size:11.5px}
 
@@ -199,6 +205,7 @@
   @media (max-width:760px){
     .grid3,.stats{grid-template-columns:1fr}
     .fig-pair{grid-template-columns:1fr}
+    .fig-pair.data-figures{grid-template-columns:1fr;padding:12px;gap:20px}
     .clip{flex:0 0 78vw}
     header nav{display:none}
     section{padding:34px 0}
@@ -270,16 +277,22 @@
         <div class="model-toolbar" hidden>
           <select id="model-view" aria-label="Model view"><option value="default">Three-quarter</option><option value="front">Front</option><option value="back">Back</option><option value="side">Side</option></select>
           <select id="model-part" aria-label="Select a link"><option value="">All links</option></select>
-          <button id="model-reset" type="button" title="Reset view and visibility" aria-label="Reset view and visibility"><i data-lucide="rotate-ccw"></i></button>
+          <button id="model-reset" type="button" title="Reset pose, view and visibility" aria-label="Reset pose, view and visibility"><i data-lucide="rotate-ccw"></i></button>
           <button id="model-hide" type="button" title="Hide selected link" aria-label="Hide selected link" disabled><i data-lucide="eye-off"></i></button>
           <button id="model-spin" type="button" title="Auto-rotate" aria-label="Auto-rotate" aria-pressed="false"><i data-lucide="rotate-3d"></i></button>
           <button id="model-fullscreen" type="button" title="Fullscreen" aria-label="Fullscreen"><i data-lucide="maximize"></i></button>
         </div>
+        <div class="model-joints" hidden>
+          <select id="model-joint" aria-label="Joint"></select>
+          <input id="joint-angle" type="range" min="-180" max="180" step="1" value="0" aria-label="Joint angle in degrees">
+          <label class="joint-number"><input id="joint-angle-number" type="number" min="-180" max="180" step="1" value="0" aria-label="Joint angle in degrees">&deg;</label>
+          <button id="joint-reset" type="button" title="Reset selected joint" aria-label="Reset selected joint"><i data-lucide="undo-2"></i></button>
+          <label class="axis-toggle"><input id="model-axes" type="checkbox" checked>Axes</label>
+        </div>
         <div id="model-stage" class="model-stage" hidden></div>
         <p id="model-status" class="model-status" role="status">Loading 3D model...</p>
-      <div id="model-fallback" class="fig fig-pair">
-        <img src="figs/glove-render-front.png" alt="RevoHuman data-collection glove, front view" class="zoom">
-        <img src="figs/glove-render-side.png" alt="RevoHuman data-collection glove, side view" class="zoom">
+      <div id="model-fallback" class="fig">
+        <img src="figs/glove-joint-axes.png" alt="Current right-hand RevoHuman model with URDF rotation axes" class="zoom">
       </div>
       </div>
       <figcaption><b>Figure 1.</b> The RevoHuman data-collection glove: a side-mounted 21-DoF exoskeleton with magnetic joint encoders and full-palm thin-film tactile sensing, worn over a stretchable support glove.</figcaption>
@@ -294,20 +307,82 @@
     </div>
   </section>
 
-  <!-- ================= OVERVIEW VIDEO ================= -->
-  <section>
-    <div class="wrap">
-      <h2>Video</h2>
-      <p class="lede">A short tour of the hardware, the data pipeline, and the evaluation.</p>
-      <!-- expected file: videos/overview.mp4 -->
-      <div class="video-slot" data-src="videos/overview.mp4">
-        <div class="ph">
-          <div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div>
-          <div class="t">Overview video — coming soon</div>
-          <div class="f">videos/overview.mp4</div>
+  <!-- ================= VIDEOS ================= -->
+  <!--
+    Expected video files (all optional; slots with a missing file stay placeholders):
+      figs/task-pinch.mp4  figs/task-inhand.mp4  figs/task-tool.mp4
+      figs/task-twist.mp4  figs/task-deformable.mp4  figs/task-bimanual.mp4
+      figs/viz-kinematics.mp4  figs/viz-tactile.mp4
+      videos/viz-sync.mp4  figs/viz-replay.mp4
+  -->
+  <section id="videos">
+    <div class="wrap-wide">
+      <div class="wrap" style="padding:0">
+        <h2>Demonstration videos</h2>
+        <p class="lede">Bimanual demonstrations across six manipulation tasks, with synchronized split-screen recordings.</p>
+      </div>
+
+      <div class="rail-head">
+        <h3>Data-collection sessions</h3>
+        <span class="count">6 clips</span>
+        <div class="arrows">
+          <button class="arrowbtn" data-rail="rail1" data-dir="-1" aria-label="scroll left"><svg viewBox="0 0 16 16" fill="none"><path d="M10 3.5 5.5 8l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="arrowbtn" data-rail="rail1" data-dir="1" aria-label="scroll right"><svg viewBox="0 0 16 16" fill="none"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         </div>
       </div>
-      <div class="video-note">placeholder — drop videos/overview.mp4 into ./videos/ to enable playback</div>
+      <div class="rail" id="rail1">
+        <div class="clip">
+          <div class="video-slot"><video controls muted loop playsinline preload="metadata" aria-label="Fine pinch grasping"><source src="figs/task-pinch.mp4" type="video/mp4"><a href="figs/task-pinch.mp4">Download video</a></video></div>
+          <div class="cap"><b>Fine pinch grasping</b><span class="tag gray">split-screen</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot"><video controls muted loop playsinline preload="metadata" aria-label="In-hand manipulation"><source src="figs/task-inhand.mp4" type="video/mp4"><a href="figs/task-inhand.mp4">Download video</a></video></div>
+          <div class="cap"><b>In-hand manipulation</b><span class="tag gray">split-screen</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot"><video controls muted loop playsinline preload="metadata" aria-label="Tool use"><source src="figs/task-tool.mp4" type="video/mp4"><a href="figs/task-tool.mp4">Download video</a></video></div>
+          <div class="cap"><b>Tool use</b><span class="tag gray">split-screen</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot"><video controls muted loop playsinline preload="metadata" aria-label="Twisting &amp; insertion"><source src="figs/task-twist.mp4" type="video/mp4"><a href="figs/task-twist.mp4">Download video</a></video></div>
+          <div class="cap"><b>Twisting &amp; insertion</b><span class="tag gray">split-screen</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot"><video controls muted loop playsinline preload="metadata" aria-label="Deformable objects"><source src="figs/task-deformable.mp4" type="video/mp4"><a href="figs/task-deformable.mp4">Download video</a></video></div>
+          <div class="cap"><b>Deformable objects</b><span class="tag gray">split-screen</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot"><video controls muted loop playsinline preload="metadata" aria-label="Bimanual coordination"><source src="figs/task-bimanual.mp4" type="video/mp4"><a href="figs/task-bimanual.mp4">Download video</a></video></div>
+          <div class="cap"><b>Bimanual coordination</b><span class="tag gray">split-screen</span></div>
+        </div>
+      </div>
+
+      <div class="rail-head">
+        <h3>Signals &amp; replay</h3>
+        <span class="count">4 clips</span>
+        <div class="arrows">
+          <button class="arrowbtn" data-rail="rail2" data-dir="-1" aria-label="scroll left"><svg viewBox="0 0 16 16" fill="none"><path d="M10 3.5 5.5 8l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="arrowbtn" data-rail="rail2" data-dir="1" aria-label="scroll right"><svg viewBox="0 0 16 16" fill="none"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+      <div class="rail" id="rail2">
+        <div class="clip">
+          <div class="video-slot"><video controls muted loop playsinline preload="metadata" aria-label="Kinematic reconstruction"><source src="figs/viz-kinematics.mp4" type="video/mp4"><a href="figs/viz-kinematics.mp4">Download video</a></video></div>
+          <div class="cap"><b>Kinematic reconstruction</b><span class="tag gray">21 DoF</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot"><video controls muted loop playsinline preload="metadata" aria-label="Tactile response"><source src="figs/viz-tactile.mp4" type="video/mp4"><a href="figs/viz-tactile.mp4">Download video</a></video></div>
+          <div class="cap"><b>Tactile response</b><span class="tag gray">full palm</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot" data-src="videos/viz-sync.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">viz-sync.mp4</div></div></div>
+          <div class="cap"><b>Timeline alignment</b><span class="tag gray">&lt; 1 ms</span></div>
+        </div>
+        <div class="clip">
+          <div class="video-slot"><video controls muted loop playsinline preload="metadata" aria-label="Simulation replay"><source src="figs/viz-replay.mp4" type="video/mp4"><a href="figs/viz-replay.mp4">Download video</a></video></div>
+          <div class="cap"><b>Simulation replay</b><span class="tag gray">fidelity check</span></div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -454,11 +529,6 @@
       </div>
 
       <figure style="margin-top:34px">
-        <div class="fig"><img src="figs/joint-layout-21dof.png" alt="The 21 manipulation DoF per hand and their sensor placement" class="zoom"></div>
-        <figcaption><b>Figure 2.</b> The 21 manipulation degrees of freedom defined per hand: side-swing joints (green) and flexion joints (blue) across thumb and fingers, each coupled to a dedicated magnetic encoder.</figcaption>
-      </figure>
-
-      <figure style="margin-top:34px">
         <div class="fig fig-pair cover">
           <img src="figs/glove-photo-1.jpg" alt="RevoHuman glove prototype, dorsal view" class="zoom">
           <img src="figs/glove-photo-3.jpg" alt="RevoHuman glove prototype, detail view" class="zoom">
@@ -502,8 +572,11 @@
     </div>
     <div class="wrap-wide">
       <figure>
-        <div class="fig"><img src="figs/data-stack.png" alt="The complementary data stack of four categories of embodied manipulation data" class="zoom"></div>
-        <figcaption><b>Figure 4.</b> The complementary data stack of the four categories of embodied manipulation data. Layer area grows with collection efficiency at scale and attainable scale ceiling — it is not an absolute ranking of quality or training value. <i>(figure labels in Chinese; English version in progress)</i></figcaption>
+        <div class="fig fig-pair data-figures">
+          <img src="figs/HumanDex_1.svg" width="860" height="587" alt="Joint design goals of RevoHuman: task capability, data accuracy, and scalable data collection" class="zoom">
+          <img src="figs/HumanDex_2.svg" width="362" height="353" alt="The complementary data stack of four categories of embodied manipulation data" class="zoom">
+        </div>
+        <figcaption><b>Figure 4.</b> RevoHuman's joint design goals and the complementary embodied data stack. The first panel illustrates the trade-offs among task capability, data accuracy, and scalable collection; the second shows the complementary roles of four data sources. Layer area in the data stack grows with collection efficiency at scale and attainable scale ceiling — it is not an absolute ranking of quality or training value.</figcaption>
       </figure>
     </div>
   </section>
@@ -545,85 +618,6 @@
     </div>
   </section>
 
-  <!-- ================= VIDEOS ================= -->
-  <!--
-    Expected video files (all optional; slots with a missing file stay placeholders):
-      videos/overview.mp4
-      videos/task-pinch.mp4  videos/task-inhand.mp4  videos/task-tool.mp4
-      videos/task-twist.mp4  videos/task-deformable.mp4  videos/task-bimanual.mp4
-      videos/viz-kinematics.mp4  videos/viz-tactile.mp4
-      videos/viz-sync.mp4  videos/viz-replay.mp4
-  -->
-  <section id="videos">
-    <div class="wrap-wide">
-      <div class="wrap" style="padding:0">
-        <h2>Demonstration videos</h2>
-        <p class="lede">Collection sessions and signal visualizations, grouped by category. Scroll horizontally. <b>All slots below are placeholders</b> — drop the matching .mp4 into <span style="font-family:var(--mono);font-size:13px">videos/</span> and it will play in place.</p>
-      </div>
-
-      <div class="rail-head">
-        <h3>Data-collection sessions</h3>
-        <span class="count">6 clips</span>
-        <div class="arrows">
-          <button class="arrowbtn" data-rail="rail1" data-dir="-1" aria-label="scroll left"><svg viewBox="0 0 16 16" fill="none"><path d="M10 3.5 5.5 8l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <button class="arrowbtn" data-rail="rail1" data-dir="1" aria-label="scroll right"><svg viewBox="0 0 16 16" fill="none"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-        </div>
-      </div>
-      <div class="rail" id="rail1">
-        <div class="clip">
-          <div class="video-slot" data-src="videos/task-pinch.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">task-pinch.mp4</div></div></div>
-          <div class="cap"><b>Fine pinch grasping</b><span class="tag gray">ego view</span></div>
-        </div>
-        <div class="clip">
-          <div class="video-slot" data-src="videos/task-inhand.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">task-inhand.mp4</div></div></div>
-          <div class="cap"><b>In-hand manipulation</b><span class="tag gray">ego view</span></div>
-        </div>
-        <div class="clip">
-          <div class="video-slot" data-src="videos/task-tool.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">task-tool.mp4</div></div></div>
-          <div class="cap"><b>Tool use</b><span class="tag gray">wrist view</span></div>
-        </div>
-        <div class="clip">
-          <div class="video-slot" data-src="videos/task-twist.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">task-twist.mp4</div></div></div>
-          <div class="cap"><b>Twisting &amp; insertion</b><span class="tag gray">wrist view</span></div>
-        </div>
-        <div class="clip">
-          <div class="video-slot" data-src="videos/task-deformable.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">task-deformable.mp4</div></div></div>
-          <div class="cap"><b>Deformable objects</b><span class="tag gray">ego view</span></div>
-        </div>
-        <div class="clip">
-          <div class="video-slot" data-src="videos/task-bimanual.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">task-bimanual.mp4</div></div></div>
-          <div class="cap"><b>Bimanual coordination</b><span class="tag gray">ego view</span></div>
-        </div>
-      </div>
-
-      <div class="rail-head">
-        <h3>Signals &amp; replay</h3>
-        <span class="count">4 clips</span>
-        <div class="arrows">
-          <button class="arrowbtn" data-rail="rail2" data-dir="-1" aria-label="scroll left"><svg viewBox="0 0 16 16" fill="none"><path d="M10 3.5 5.5 8l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <button class="arrowbtn" data-rail="rail2" data-dir="1" aria-label="scroll right"><svg viewBox="0 0 16 16" fill="none"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-        </div>
-      </div>
-      <div class="rail" id="rail2">
-        <div class="clip">
-          <div class="video-slot" data-src="videos/viz-kinematics.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">viz-kinematics.mp4</div></div></div>
-          <div class="cap"><b>Kinematic reconstruction</b><span class="tag gray">21 DoF</span></div>
-        </div>
-        <div class="clip">
-          <div class="video-slot" data-src="videos/viz-tactile.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">viz-tactile.mp4</div></div></div>
-          <div class="cap"><b>Tactile response</b><span class="tag gray">full palm</span></div>
-        </div>
-        <div class="clip">
-          <div class="video-slot" data-src="videos/viz-sync.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">viz-sync.mp4</div></div></div>
-          <div class="cap"><b>Timeline alignment</b><span class="tag gray">&lt; 1 ms</span></div>
-        </div>
-        <div class="clip">
-          <div class="video-slot" data-src="videos/viz-replay.mp4"><div class="ph"><div class="play"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M5 3.5v9l7-4.5-7-4.5Z"/></svg></div><div class="t">coming soon</div><div class="f">viz-replay.mp4</div></div></div>
-          <div class="cap"><b>Simulation replay</b><span class="tag gray">fidelity check</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- ================= CITATION ================= -->
   <section id="citation">
@@ -644,7 +638,7 @@
 
   <footer>
     <div class="wrap">
-      <b style="color:var(--muted)">RevoHuman</b> project page — demo build. Figures are draft assets from the paper; video slots are placeholders awaiting footage. Page design follows <a class="inline" href="https://openwam-official.github.io/">OpenWAM</a>'s project-page layout.
+      <b style="color:var(--muted)">RevoHuman</b> project page — demo build. Figures are draft assets from the paper; the timeline alignment video is forthcoming. Page design follows <a class="inline" href="https://openwam-official.github.io/">OpenWAM</a>'s project-page layout.
     </div>
   </footer>
 </main>
