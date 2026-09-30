@@ -83,6 +83,8 @@
   figure{margin:0}
   .fig{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--panel)}
   .fig img{display:block;width:100%;height:auto}
+  .fig-portrait{padding:16px;background:#fff}
+  .fig-portrait img{width:auto;max-width:100%;height:auto;max-height:min(76vh,760px);margin:0 auto}
   .fig-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .fig-pair.cover img{aspect-ratio:4/3;object-fit:cover}
   .fig-pair.data-figures{grid-template-columns:1.45fr 1fr;align-items:center;
@@ -213,8 +215,6 @@
   .opening-film{width:100%;height:100vh;height:100svh;background:#000;overflow:hidden}
   .opening-film video{display:block;width:100%;height:100%;object-fit:contain;background:#000}
 </style>
-<link rel="stylesheet" href="figure-model.css">
-<script type="importmap">{"imports":{"three":"./vendor/three/three.module.min.js"}}</script>
 </head>
 <body>
 
@@ -259,7 +259,7 @@
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38l-.01-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.52 7.52 0 0 1 8 3.86c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48l-.01 2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z"/></svg>
         Code
       </a>
-      <a class="btn" href="#">🤗&nbsp;Data</a>
+      <a class="btn" href="https://drive.google.com/drive/folders/1GQCBbRyXi6p6f_Zh0uU6jrDP_AYkAFTQ?usp=sharing">🤗&nbsp;Data</a>
       <a class="btn" href="#videos">
         <svg viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="9" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 7l4-2.5v7L10.5 9" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
         Videos
@@ -270,27 +270,8 @@
   <!-- teaser -->
   <div class="wrap-wide">
     <figure>
-      <div id="figure-model" class="figure-model" aria-label="Interactive RevoHuman glove model">
-        <div class="model-toolbar" hidden>
-          <select id="model-view" aria-label="Model view"><option value="default">Three-quarter</option><option value="front">Front</option><option value="back">Back</option><option value="side">Side</option></select>
-          <select id="model-part" aria-label="Select a link"><option value="">All links</option></select>
-          <button id="model-reset" type="button" title="Reset pose, view and visibility" aria-label="Reset pose, view and visibility"><i data-lucide="rotate-ccw"></i></button>
-          <button id="model-hide" type="button" title="Hide selected link" aria-label="Hide selected link" disabled><i data-lucide="eye-off"></i></button>
-          <button id="model-spin" type="button" title="Auto-rotate" aria-label="Auto-rotate" aria-pressed="false"><i data-lucide="rotate-3d"></i></button>
-          <button id="model-fullscreen" type="button" title="Fullscreen" aria-label="Fullscreen"><i data-lucide="maximize"></i></button>
-        </div>
-        <div class="model-joints" hidden>
-          <select id="model-joint" aria-label="Joint"></select>
-          <input id="joint-angle" type="range" min="-180" max="180" step="1" value="0" aria-label="Joint angle in degrees">
-          <label class="joint-number"><input id="joint-angle-number" type="number" min="-180" max="180" step="1" value="0" aria-label="Joint angle in degrees">&deg;</label>
-          <button id="joint-reset" type="button" title="Reset selected joint" aria-label="Reset selected joint"><i data-lucide="undo-2"></i></button>
-          <label class="axis-toggle"><input id="model-axes" type="checkbox" checked>Axes</label>
-        </div>
-        <div id="model-stage" class="model-stage" hidden></div>
-        <p id="model-status" class="model-status" role="status">Loading 3D model...</p>
-      <div id="model-fallback" class="fig">
-        <img src="figs/glove-joint-axes.png" alt="Current right-hand RevoHuman model with URDF rotation axes" class="zoom">
-      </div>
+      <div class="fig fig-portrait">
+        <img src="figs/joint-layout-21dof.png" width="1103" height="1426" alt="RevoHuman glove joint layout: the 21-DoF side-mounted exoskeleton with magnetic joint encoders on each joint" class="zoom">
       </div>
       <figcaption><b>Figure 1.</b> The RevoHuman data-collection glove: a side-mounted 21-DoF exoskeleton with magnetic joint encoders and full-palm thin-film tactile sensing, worn over a stretchable support glove.</figcaption>
     </figure>
@@ -530,7 +511,7 @@
           <img src="figs/glove-photo-1.jpg" alt="RevoHuman glove prototype, dorsal view" class="zoom">
           <img src="figs/glove-photo-3.jpg" alt="RevoHuman glove prototype, detail view" class="zoom">
         </div>
-        <figcaption><b>Figure 3.</b> Prototype hardware: the instrumented glove with metal finger linkages and the dorsal acquisition hub.</figcaption>
+        <figcaption><b>Figure 2.</b> Prototype hardware: the instrumented glove with metal finger linkages and the dorsal acquisition hub.</figcaption>
       </figure>
     </div>
   </section>
@@ -573,7 +554,7 @@
           <img src="figs/HumanDex_1.svg" width="860" height="587" alt="Joint design goals of RevoHuman: task capability, data accuracy, and scalable data collection" class="zoom">
           <img src="figs/HumanDex_2.svg" width="362" height="353" alt="The complementary data stack of four categories of embodied manipulation data" class="zoom">
         </div>
-        <figcaption><b>Figure 4.</b> RevoHuman's joint design goals and the complementary embodied data stack. The first panel illustrates the trade-offs among task capability, data accuracy, and scalable collection; the second shows the complementary roles of four data sources. Layer area in the data stack grows with collection efficiency at scale and attainable scale ceiling — it is not an absolute ranking of quality or training value.</figcaption>
+        <figcaption><b>Figure 3.</b> RevoHuman's joint design goals and the complementary embodied data stack. The first panel illustrates the trade-offs among task capability, data accuracy, and scalable collection; the second shows the complementary roles of four data sources. Layer area in the data stack grows with collection efficiency at scale and attainable scale ceiling — it is not an absolute ranking of quality or training value.</figcaption>
       </figure>
     </div>
   </section>
@@ -697,11 +678,5 @@
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') lb.classList.remove('open'); });
 </script>
 <script src="vendor/lucide.min.js"></script>
-<script type="module">
-  import('./figure-model.js').catch(function(error){
-    console.error(error);
-    document.getElementById('model-status').textContent = '3D unavailable. Original figures shown.';
-  });
-</script>
 </body>
 </html>
